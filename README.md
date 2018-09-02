@@ -1,7 +1,10 @@
 # node-openvr
-OpenVR bindings to nodejs.
+OpenVR bindings for NodeJS.
 
-#### Quickstart
+## Notes
+This fork is designed with Zephyr in mind. There's no guarantee that this fork will work for other use cases.
+
+## Quickstart
 ```
 npm install  # Build native bindings
 npm lint     # Perform ESLint check

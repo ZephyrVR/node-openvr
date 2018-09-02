@@ -56,6 +56,7 @@ vr::Texture_t IVROverlay::getTexture(uint8_t* buf, uint32_t width, uint32_t heig
 
 NAN_MODULE_INIT(IVROverlay::Init) {
     SET_METHOD(CreateOverlay);
+    SET_METHOD(CreateDashboardOverlay);
     SET_METHOD(ShowOverlay);
     SET_METHOD(Check);
     
@@ -130,6 +131,42 @@ NAN_METHOD(IVROverlay::CreateOverlay) {
 
     // set bounds to correct OpenGL's texture draw
     err = vr::VROverlay()->SetOverlayTextureBounds(hOverlay, &(vr::VRTextureBounds_t{ 0.F, 1.F, 1.F, 0.F }));
+
+    uint32_t oHndPtr = (uint32_t)hOverlay;
+    overlayHandleMap.insert(std::pair<uint32_t, vr::VROverlayHandle_t>(oHndPtr, hOverlay));
+    info.GetReturnValue().Set(oHndPtr);
+}
+
+NAN_METHOD(IVROverlay::CreateDashboardOverlay) {
+    if (info.Length() != 3) {
+        Nan::ThrowError("Wrong number of arguments.");
+        return;
+    }
+
+    if (glWindow == NULL) {
+        glfwInit();
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+        glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
+        GLFWwindow* glWindow = glfwCreateWindow(1, 1, "node-openvr", nullptr, nullptr);
+        glfwMakeContextCurrent(glWindow);
+    }
+
+    vr::VROverlayHandle_t hOverlay = 0U;
+    vr::VROverlayHandle_t hOverlayThumbnail = 0U;
+
+    V8STR(info[0], key);
+    V8STR(info[1], name);
+    V8STR(info[2], thumbnailPath);
+    
+    vr::VROverlayError err = vr::VROverlay()->CreateDashboardOverlay(key, name, &hOverlay, &hOverlayThumbnail);
+    CHECK_ERROR(err);
+
+    // set bounds to correct OpenGL's texture draw
+    err = vr::VROverlay()->SetOverlayTextureBounds(hOverlay, &(vr::VRTextureBounds_t{ 0.F, 1.F, 1.F, 0.F }));
+    err = vr::VROverlay()->SetOverlayFromFile(hOverlayThumbnail, thumbnailPath);
 
     uint32_t oHndPtr = (uint32_t)hOverlay;
     overlayHandleMap.insert(std::pair<uint32_t, vr::VROverlayHandle_t>(oHndPtr, hOverlay));

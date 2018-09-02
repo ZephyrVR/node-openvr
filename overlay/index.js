@@ -27,13 +27,13 @@ class VROverlay {
       throw new Error("Couldn't initialize a VROverlay. Are you in Scene or Overlay mode from VR_Init?")
     }
     // console.log('pre-create overlay')
-    this.handle = vr.overlay.CreateOverlay(this.key, this.name)
+    this.handle = vr.overlay.CreateDashboardOverlay(this.key, this.name, 'E:\\Development\\node-openvr\\samples\\image-overlay\\sample.jpg')
     // console.log('post-create overlay')
     // console.log(vr.overlay.TestHandle(this.handle), this.handle)
   }
 
   show () {
-    vr.overlay.ShowOverlay(this.handle)
+    // vr.overlay.ShowOverlay(this.handle)
   }
 
   get alpha () {

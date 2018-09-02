@@ -30,6 +30,7 @@ class IVROverlay : public Nan::ObjectWrap {
         static NAN_METHOD(Internals);
 
         static NAN_METHOD(CreateOverlay);
+        static NAN_METHOD(CreateDashboardOverlay);
 
         // static NAN_METHOD(SetOverlayAlpha);
         static NAN_METHOD(SetOverlayTextureFromBuffer);
