@@ -2,7 +2,7 @@ const vr = require('..')
 const { VRVec3 } = require('../tools')
 
 class VROverlay {
-  constructor ({system, key, name, skipChecks = false, handle = null}) {
+  constructor ({system, key, name, iconPath, skipChecks = false, handle = null}) {
     // checking for sanity
 
     if (!skipChecks) {
@@ -14,6 +14,7 @@ class VROverlay {
     this.system = system
     this.name = name || key
     this.key = key || name
+    this.iconPath = iconPath
     this.handle = handle
     this.renderer = vr.overlay.Internals()
 
@@ -27,7 +28,8 @@ class VROverlay {
       throw new Error("Couldn't initialize a VROverlay. Are you in Scene or Overlay mode from VR_Init?")
     }
     // console.log('pre-create overlay')
-    this.handle = vr.overlay.CreateDashboardOverlay(this.key, this.name, 'E:\\Development\\node-openvr\\samples\\image-overlay\\sample.jpg')
+    console.log(this.iconPath);
+    this.handle = vr.overlay.CreateDashboardOverlay(this.key, this.name, this.iconPath)
     // console.log('post-create overlay')
     // console.log(vr.overlay.TestHandle(this.handle), this.handle)
   }
@@ -85,7 +87,7 @@ class VROverlay {
 
 
   A) around -30 or +30, this will pick which eye this renders to?
-  B) 
+  B)
   */
   transformTrackedDeviceRelativeMatrix (trackedDevice, matrix) {
     vr.overlay.SetOverlayTransformTrackedDeviceRelative(this.handle, trackedDevice, matrix)
