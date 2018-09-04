@@ -11,12 +11,16 @@ class VROverlay {
       }
     }
 
+    console.log('setup: ' + iconPath)
+
     this.system = system
     this.name = name || key
     this.key = key || name
     this.iconPath = iconPath
     this.handle = handle
     this.renderer = vr.overlay.Internals()
+
+    console.log('setup2: ' + this.iconPath)
 
     this._pos = VRVec3.HmdMatrix34(0, 0, 0)
 

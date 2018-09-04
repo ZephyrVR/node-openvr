@@ -66,6 +66,7 @@ NAN_MODULE_INIT(IVROverlay::Init) {
     SET_METHOD(SetOverlayTextureFromBuffer);
     
     SET_METHOD(SetOverlayTransformTrackedDeviceRelative);
+    SET_METHOD(SetOverlayWidthInMeters);
     // target->Set("SetOverlayWidthInMeters", SetOverlayWidthInMeters);
 
     SET_METHOD(Internals);
@@ -224,11 +225,23 @@ NAN_METHOD(IVROverlay::SetOverlayTextureFromBuffer) {
 }
 
 NAN_METHOD(IVROverlay::SetOverlayTransformTrackedDeviceRelative) {
-
     vr::TrackedDeviceIndex_t trackedDevice = info[1]->Uint32Value();
     vr::HmdMatrix34_t transform = decodeVec3x4(info[2]);
 
     vr::VROverlayError err;
     err = vr::VROverlay()->SetOverlayTransformTrackedDeviceRelative(HND_OVERLAY(info[0]), trackedDevice, &transform);
     checkError(err, "SetOverlayTransformTrackedDeviceRelative failed");
+}
+
+NAN_METHOD(IVROverlay::SetOverlayWidthInMeters) {
+    if (info.Length() != 2) {
+        Nan::ThrowError("Wrong number of arguments.");
+        return;
+    }
+
+    uint32_t width = info[1]->Uint32Value();
+
+    vr::VROverlayError err;
+    err = vr::VROverlay()->SetOverlayWidthInMeters(HND_OVERLAY(info[0]), width);
+    checkError(err, "SetOverlayWidthInMeters failed");
 }
