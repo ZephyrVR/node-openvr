@@ -10,6 +10,7 @@
 #define SET_METHOD(name) target->Set(Nan::New(#name).ToLocalChecked(), Nan::New<v8::FunctionTemplate>(name)->GetFunction());
 
 #define V8STR(prop, name) char * name = *Nan::Utf8String(prop);
+#define V8INT(prop, name) uint32_t name = prop->Uint32Value();
 
 inline vr::HmdMatrix34_t decodeVec3x4(const v8::Local<v8::Value> value) {
   vr::HmdMatrix34_t result;

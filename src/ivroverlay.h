@@ -14,13 +14,10 @@
 class IVROverlay : public Nan::ObjectWrap {
     public:
         static NAN_MODULE_INIT(Init);
-        // static v8::Local<v8::Object> NewInstance(vr::IVROverlay *overlay);
-    
+        static std::map<uint32_t, vr::VROverlayHandle_t> overlayHandleMap;
     private:
         explicit IVROverlay(vr::IVROverlay *self);
         ~IVROverlay() = default;
-
-        static std::map<uint32_t, vr::VROverlayHandle_t> overlayHandleMap;
         
         static GLFWwindow* glWindow;
         static GLuint bufferTexture;
@@ -50,11 +47,8 @@ class IVROverlay : public Nan::ObjectWrap {
             return the_constructor;
         }
 
-
-        // vr::IVROverlay * const self_;
         static bool checkError(vr::VROverlayError err, const char* v);
         static vr::Texture_t getTexture(uint8_t* buffer, uint32_t width, uint32_t height);
-}
-
+};
 
 #endif

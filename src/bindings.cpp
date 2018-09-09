@@ -1,6 +1,7 @@
 #include "ivrsystem.h"
 #include "ivrcompositor.h"
 #include "ivroverlay.h"
+#include "ivrnotifications.h"
 #include "openvr.h"
 
 #include <nan.h>
@@ -26,6 +27,10 @@ void Initialize(v8::Local<v8::Object> exports) {
   v8::Local<v8::Object> overlay = v8::Object::New(v8::Isolate::GetCurrent());
   IVROverlay::Init(overlay);
   exports->Set(Nan::New("overlay").ToLocalChecked(), overlay);
+
+  v8::Local<v8::Object> notifications = v8::Object::New(v8::Isolate::GetCurrent());
+  IVRNotifications::Init(notifications);
+  exports->Set(Nan::New("notifications").ToLocalChecked(), notifications);
 }
 
 NODE_MODULE(openvr, Initialize);

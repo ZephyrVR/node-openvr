@@ -17,6 +17,7 @@
         'src/ivrsystem.cpp',
         'src/ivrcompositor.cpp',
         'src/ivroverlay.cpp',
+        'src/ivrnotifications.cpp',
         'src/openvr.cpp'
       ],
       'include_dirs': [
