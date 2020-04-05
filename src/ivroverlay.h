@@ -35,6 +35,8 @@ class IVROverlay : public Nan::ObjectWrap {
         // static NAN_METHOD(SetOverlayTransformAbsolute);
         static NAN_METHOD(SetOverlayTransformTrackedDeviceRelative);
         static NAN_METHOD(SetOverlayWidthInMeters);
+
+        static NAN_METHOD(SetOverlayMouseScale);
  
         static NAN_METHOD(ShowOverlay);
 

@@ -67,6 +67,7 @@ NAN_MODULE_INIT(IVROverlay::Init) {
     
     SET_METHOD(SetOverlayTransformTrackedDeviceRelative);
     SET_METHOD(SetOverlayWidthInMeters);
+    SET_METHOD(SetOverlayMouseScale);
     // target->Set("SetOverlayWidthInMeters", SetOverlayWidthInMeters);
 
     SET_METHOD(Internals);
@@ -244,4 +245,20 @@ NAN_METHOD(IVROverlay::SetOverlayWidthInMeters) {
     vr::VROverlayError err;
     err = vr::VROverlay()->SetOverlayWidthInMeters(HND_OVERLAY(info[0]), width);
     checkError(err, "SetOverlayWidthInMeters failed");
+}
+
+NAN_METHOD(IVROverlay::SetOverlayMouseScale) {
+    if (info.Length() != 3) {
+        Nan::ThrowError("Wrong number of arguments.");
+        return;
+    }
+
+    vr::HmdVector2_t vecWindowSize =
+    {
+        info[1]->Uint32Value(),
+        info[2]->Uint32Value()
+    };
+    vr::VROverlayError err;
+    err = vr::VROverlay()->SetOverlayMouseScale(HND_OVERLAY(info[0]), &vecWindowSize);
+    checkError(err, "SetOverlayMouseScale failed");
 }
