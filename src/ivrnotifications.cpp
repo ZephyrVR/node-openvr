@@ -34,17 +34,34 @@ NAN_METHOD(IVRNotifications::Internals) {
 }
 
 NAN_METHOD(IVRNotifications::CreateNotification) {
-    if (info.Length() != 2) {
+    if (info.Length() != 6) {
         Nan::ThrowError("Wrong number of arguments.");
+    }
+
+    if (!info[2]->IsArrayBufferView()) {
+        Nan::ThrowTypeError("Argument 3 must be an ArrayBufferView, such as a Uint8ClampedArray");
+        return;
     }
 
     vr::EVRInitError eError;
     vr::IVRNotifications * notif = (vr::IVRNotifications *) vr::VR_GetGenericInterface(vr::IVRNotifications_Version, &eError);
 
+    // Icon
+    Local<ArrayBufferView> input = info[2].As<ArrayBufferView>();
+    Nan::TypedArrayContents<uint8_t> buf(input);
+
+    vr::NotificationBitmap_t icon;
+    icon.m_nBytesPerPixel = 4;
+    icon.m_nWidth = info[3]->Uint32Value();
+    icon.m_nHeight = info[4]->Uint32Value();
+    icon.m_pImageData = *buf;
+
+    // Notification text
     V8STR(info[1], notificationText);
 
+    // Send notification
     vr::VRNotificationId id;
-    notif->CreateNotification(HND_OVERLAY(info[0]), 0, vr::EVRNotificationType_Transient, notificationText, vr::EVRNotificationStyle_Application, NULL, &id);
+    notif->CreateNotification(HND_OVERLAY(info[0]), 0, vr::EVRNotificationType_Transient, notificationText, vr::EVRNotificationStyle_Application, &icon, &id);
 
     info.GetReturnValue().Set(id);
 }
