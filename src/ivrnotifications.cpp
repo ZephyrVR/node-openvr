@@ -7,7 +7,7 @@
 using namespace v8;
 
 #define CHECK_ERROR(err) { if (err != vr::VROverlayError_None) { Nan::ThrowError(vr::VROverlay()->GetOverlayErrorNameFromEnum(err)); return; } }
-#define HND_OVERLAY(prop) IVROverlay::overlayHandleMap[prop->Uint32Value()]
+#define HND_OVERLAY(prop) IVROverlay::overlayHandleMap[prop->Uint32Value(Nan::GetCurrentContext()).FromJust()]
 
 bool IVRNotifications::checkError(vr::EVRNotificationError err) {
     if (err != vr::VRNotificationError_OK) {
@@ -52,8 +52,8 @@ NAN_METHOD(IVRNotifications::CreateNotification) {
 
     vr::NotificationBitmap_t icon;
     icon.m_nBytesPerPixel = 4;
-    icon.m_nWidth = info[3]->Uint32Value();
-    icon.m_nHeight = info[4]->Uint32Value();
+    icon.m_nWidth = info[3]->Uint32Value(Nan::GetCurrentContext()).FromJust();
+    icon.m_nHeight = info[4]->Uint32Value(Nan::GetCurrentContext()).FromJust();
     icon.m_pImageData = *buf;
 
     // Notification text

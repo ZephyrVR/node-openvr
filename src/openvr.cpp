@@ -23,7 +23,7 @@ NAN_METHOD(VR_Init)
     return;
   }
 
-  uint32_t applicationType = info[0]->Uint32Value();
+  uint32_t applicationType = info[0]->Uint32Value(Nan::GetCurrentContext()).FromJust();
   // TODO: is there a better way to do this?
   constexpr uint32_t applicationTypeMax = vr::VRApplication_Max;
   if (applicationType >= applicationTypeMax)
@@ -42,8 +42,8 @@ NAN_METHOD(VR_Init)
   // If the VR system failed to initialize, immediately raise a node exception.
   if (system == nullptr)
   {
-    Local<Value> err = Exception::Error(String::NewFromUtf8(Isolate::GetCurrent(), vr::VR_GetVRInitErrorAsEnglishDescription(error)));
-    Local<Object>::Cast(err)->Set(String::NewFromUtf8(Isolate::GetCurrent(), "code"), Number::New(Isolate::GetCurrent(), error));
+    Local<Value> err = Exception::Error(String::NewFromUtf8(Isolate::GetCurrent(), vr::VR_GetVRInitErrorAsEnglishDescription(error), v8::NewStringType::kNormal).ToLocalChecked());
+    Local<Object>::Cast(err)->Set(Nan::GetCurrentContext(), String::NewFromUtf8(Isolate::GetCurrent(), "code", v8::NewStringType::kNormal).ToLocalChecked(), Number::New(Isolate::GetCurrent(), error));
     Nan::ThrowError(err);
     return;
   }
@@ -124,7 +124,7 @@ NAN_METHOD(VR_GetVRInitErrorAsSymbol)
     return;
   }
 
-  uint32_t nError = info[0]->Uint32Value();
+  uint32_t nError = info[0]->Uint32Value(Nan::GetCurrentContext()).FromJust();
   vr::EVRInitError eError = static_cast<vr::EVRInitError>(nError);
   const char *result = vr::VR_GetVRInitErrorAsSymbol(eError);
   info.GetReturnValue().Set(Nan::New<String>(result).ToLocalChecked());
@@ -146,7 +146,7 @@ NAN_METHOD(VR_GetVRInitErrorAsEnglishDescription)
     return;
   }
 
-  uint32_t nError = info[0]->Uint32Value();
+  uint32_t nError = info[0]->Uint32Value(Nan::GetCurrentContext()).FromJust();
   vr::EVRInitError eError = static_cast<vr::EVRInitError>(nError);
   const auto result = vr::VR_GetVRInitErrorAsEnglishDescription(eError);
   info.GetReturnValue().Set(Nan::New<String>(result).ToLocalChecked());

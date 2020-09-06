@@ -84,9 +84,9 @@ NAN_METHOD(IVRCompositor::WaitGetPoses)
   Local<Float32Array> hmdFloat32Array = Local<Float32Array>::Cast(info[1]);
   Local<Float32Array> leftControllerFloat32Array = Local<Float32Array>::Cast(info[2]);
   Local<Float32Array> rightControllerFloat32Array = Local<Float32Array>::Cast(info[3]);
-  hmdFloat32Array->Set(0, Number::New(Isolate::GetCurrent(), std::numeric_limits<float>::quiet_NaN()));
-  leftControllerFloat32Array->Set(0, Number::New(Isolate::GetCurrent(), std::numeric_limits<float>::quiet_NaN()));
-  rightControllerFloat32Array->Set(0, Number::New(Isolate::GetCurrent(), std::numeric_limits<float>::quiet_NaN()));
+  hmdFloat32Array->Set(Nan::GetCurrentContext(), 0, Number::New(Isolate::GetCurrent(), std::numeric_limits<float>::quiet_NaN()));
+  leftControllerFloat32Array->Set(Nan::GetCurrentContext(), 0, Number::New(Isolate::GetCurrent(), std::numeric_limits<float>::quiet_NaN()));
+  rightControllerFloat32Array->Set(Nan::GetCurrentContext(), 0, Number::New(Isolate::GetCurrent(), std::numeric_limits<float>::quiet_NaN()));
 
   for (unsigned int i = 0; i < trackedDevicePoseArray.size(); i++) {
     const vr::TrackedDevicePose_t &trackedDevicePose = trackedDevicePoseArray[i];
@@ -97,13 +97,13 @@ NAN_METHOD(IVRCompositor::WaitGetPoses)
 
         for (unsigned int v = 0; v < 4; v++) {
           for (unsigned int u = 0; u < 3; u++) {
-            hmdFloat32Array->Set(v * 4 + u, Number::New(Isolate::GetCurrent(), matrix.m[u][v]));
+            hmdFloat32Array->Set(Nan::GetCurrentContext(), v * 4 + u, Number::New(Isolate::GetCurrent(), matrix.m[u][v]));
           }
         }
-        hmdFloat32Array->Set(0 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
-        hmdFloat32Array->Set(1 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
-        hmdFloat32Array->Set(2 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
-        hmdFloat32Array->Set(3 * 4 + 3, Number::New(Isolate::GetCurrent(), 1));
+        hmdFloat32Array->Set(Nan::GetCurrentContext(), 0 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
+        hmdFloat32Array->Set(Nan::GetCurrentContext(), 1 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
+        hmdFloat32Array->Set(Nan::GetCurrentContext(), 2 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
+        hmdFloat32Array->Set(Nan::GetCurrentContext(), 3 * 4 + 3, Number::New(Isolate::GetCurrent(), 1));
       } else if (deviceClass == vr::TrackedDeviceClass_Controller) {
         const vr::ETrackedControllerRole controllerRole = system->self_->GetControllerRoleForTrackedDeviceIndex(i);
         if (controllerRole == vr::TrackedControllerRole_LeftHand) {
@@ -111,25 +111,25 @@ NAN_METHOD(IVRCompositor::WaitGetPoses)
 
           for (unsigned int v = 0; v < 4; v++) {
             for (unsigned int u = 0; u < 3; u++) {
-              leftControllerFloat32Array->Set(v * 4 + u, Number::New(Isolate::GetCurrent(), matrix.m[u][v]));
+              leftControllerFloat32Array->Set(Nan::GetCurrentContext(), v * 4 + u, Number::New(Isolate::GetCurrent(), matrix.m[u][v]));
             }
           }
-          leftControllerFloat32Array->Set(0 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
-          leftControllerFloat32Array->Set(1 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
-          leftControllerFloat32Array->Set(2 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
-          leftControllerFloat32Array->Set(3 * 4 + 3, Number::New(Isolate::GetCurrent(), 1));
+          leftControllerFloat32Array->Set(Nan::GetCurrentContext(), 0 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
+          leftControllerFloat32Array->Set(Nan::GetCurrentContext(), 1 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
+          leftControllerFloat32Array->Set(Nan::GetCurrentContext(), 2 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
+          leftControllerFloat32Array->Set(Nan::GetCurrentContext(), 3 * 4 + 3, Number::New(Isolate::GetCurrent(), 1));
         } else if (controllerRole == vr::TrackedControllerRole_RightHand) {
           const vr::HmdMatrix34_t &matrix = trackedDevicePose.mDeviceToAbsoluteTracking;
 
           for (unsigned int v = 0; v < 4; v++) {
             for (unsigned int u = 0; u < 3; u++) {
-              rightControllerFloat32Array->Set(v * 4 + u, Number::New(Isolate::GetCurrent(), matrix.m[u][v]));
+              rightControllerFloat32Array->Set(Nan::GetCurrentContext(), v * 4 + u, Number::New(Isolate::GetCurrent(), matrix.m[u][v]));
             }
           }
-          rightControllerFloat32Array->Set(0 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
-          rightControllerFloat32Array->Set(1 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
-          rightControllerFloat32Array->Set(2 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
-          rightControllerFloat32Array->Set(3 * 4 + 3, Number::New(Isolate::GetCurrent(), 1));
+          rightControllerFloat32Array->Set(Nan::GetCurrentContext(), 0 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
+          rightControllerFloat32Array->Set(Nan::GetCurrentContext(), 1 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
+          rightControllerFloat32Array->Set(Nan::GetCurrentContext(), 2 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
+          rightControllerFloat32Array->Set(Nan::GetCurrentContext(), 3 * 4 + 3, Number::New(Isolate::GetCurrent(), 1));
         }
       }
     }
@@ -154,7 +154,7 @@ NAN_METHOD(IVRCompositor::Submit)
 
   vr::EColorSpace colorSpace = vr::ColorSpace_Gamma;
 
-  vr::Texture_t leftEyeTexture = {(void*)(size_t)info[0]->Int32Value(), vr::TextureType_OpenGL, colorSpace};
+  vr::Texture_t leftEyeTexture = {(void*)(size_t)info[0]->Int32Value(Nan::GetCurrentContext()).FromJust(), vr::TextureType_OpenGL, colorSpace};
   vr::VRTextureBounds_t leftEyeTextureBounds = {
     0, 0,
     0.5, 1,
@@ -176,7 +176,7 @@ NAN_METHOD(IVRCompositor::Submit)
     return;
   }
 
-  vr::Texture_t rightEyeTexture = {(void*)(size_t)info[0]->Int32Value(), vr::TextureType_OpenGL, colorSpace};
+  vr::Texture_t rightEyeTexture = {(void*)(size_t)info[0]->Int32Value(Nan::GetCurrentContext()).FromJust(), vr::TextureType_OpenGL, colorSpace};
   vr::VRTextureBounds_t rightEyeTextureBounds = {
     0.5, 0,
     1, 1,

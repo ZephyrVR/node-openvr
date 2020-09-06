@@ -164,7 +164,7 @@ NAN_METHOD(IVRSystem::GetProjectionMatrix)
     return;
   }
 
-  uint32_t nEye = info[0]->Uint32Value();
+  uint32_t nEye = info[0]->Uint32Value(Nan::GetCurrentContext()).FromJust();
   if (nEye >= 2)
   {
     Nan::ThrowTypeError("Argument[0] was out of enum range (EVREye).");
@@ -190,14 +190,14 @@ NAN_METHOD(IVRSystem::GetProjectionMatrix)
   }
 
   vr::EVREye eEye = static_cast<vr::EVREye>(nEye);
-  float fNearZ = static_cast<float>(info[1]->NumberValue());
-  float fFarZ = static_cast<float>(info[2]->NumberValue());
+  float fNearZ = static_cast<float>(info[1]->NumberValue(Nan::GetCurrentContext()).FromJust());
+  float fFarZ = static_cast<float>(info[2]->NumberValue(Nan::GetCurrentContext()).FromJust());
   vr::HmdMatrix44_t matrix = obj->self_->GetProjectionMatrix(eEye, fNearZ, fFarZ);
 
   Local<Float32Array> float32Array = Local<Float32Array>::Cast(info[3]);
   for (unsigned int v = 0; v < 4; v++) {
     for (unsigned int u = 0; u < 4; u++) {
-      float32Array->Set(v * 4 + u, Number::New(Isolate::GetCurrent(), matrix.m[u][v]));
+      float32Array->Set(Nan::GetCurrentContext(), v * 4 + u, Number::New(Isolate::GetCurrent(), matrix.m[u][v]));
     }
   }
 }
@@ -220,7 +220,7 @@ NAN_METHOD(IVRSystem::GetProjectionRaw)
     return;
   }
 
-  uint32_t nEye = info[0]->Uint32Value();
+  uint32_t nEye = info[0]->Uint32Value(Nan::GetCurrentContext()).FromJust();
   if (nEye >= 2)
   {
     Nan::ThrowTypeError("Argument[0] was out of enum range (EVREye).");
@@ -266,7 +266,7 @@ NAN_METHOD(IVRSystem::ComputeDistortion)
     return;
   }
 
-  uint32_t nEye = info[0]->Uint32Value();
+  uint32_t nEye = info[0]->Uint32Value(Nan::GetCurrentContext()).FromJust();
   if (nEye >= 2)
   {
     Nan::ThrowTypeError("Argument[0] was out of enum range (EVREye).");
@@ -286,8 +286,8 @@ NAN_METHOD(IVRSystem::ComputeDistortion)
   }
 
   vr::EVREye eEye = static_cast<vr::EVREye>(nEye);
-  float fU = static_cast<float>(info[1]->NumberValue());
-  float fV = static_cast<float>(info[2]->NumberValue());
+  float fU = static_cast<float>(info[1]->NumberValue(Nan::GetCurrentContext()).FromJust());
+  float fV = static_cast<float>(info[2]->NumberValue(Nan::GetCurrentContext()).FromJust());
   vr::DistortionCoordinates_t distortionCoordinates;
   bool success = obj->self_->ComputeDistortion(eEye, fU, fV, &distortionCoordinates);
 
@@ -323,7 +323,7 @@ NAN_METHOD(IVRSystem::GetEyeToHeadTransform)
     return;
   }
 
-  uint32_t nEye = info[0]->Uint32Value();
+  uint32_t nEye = info[0]->Uint32Value(Nan::GetCurrentContext()).FromJust();
   if (nEye >= 2)
   {
     Nan::ThrowTypeError("Argument[0] was out of enum range (EVREye).");
@@ -336,13 +336,13 @@ NAN_METHOD(IVRSystem::GetEyeToHeadTransform)
   Local<Float32Array> float32Array = Local<Float32Array>::Cast(info[1]);
   for (unsigned int v = 0; v < 4; v++) {
     for (unsigned int u = 0; u < 3; u++) {
-      float32Array->Set(v * 4 + u, Number::New(Isolate::GetCurrent(), matrix.m[u][v]));
+      float32Array->Set(Nan::GetCurrentContext(), v * 4 + u, Number::New(Isolate::GetCurrent(), matrix.m[u][v]));
     }
   }
-  float32Array->Set(0 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
-  float32Array->Set(1 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
-  float32Array->Set(2 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
-  float32Array->Set(3 * 4 + 3, Number::New(Isolate::GetCurrent(), 1));
+  float32Array->Set(Nan::GetCurrentContext(), 0 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
+  float32Array->Set(Nan::GetCurrentContext(), 1 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
+  float32Array->Set(Nan::GetCurrentContext(), 2 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
+  float32Array->Set(Nan::GetCurrentContext(), 3 * 4 + 3, Number::New(Isolate::GetCurrent(), 1));
 }
 
 //=============================================================================
@@ -441,7 +441,7 @@ NAN_METHOD(IVRSystem::SetDisplayVisibility)
     return;
   }
 
-  bool bIsVisibleOnDesktop = info[0]->BooleanValue();
+  bool bIsVisibleOnDesktop = Nan::To<bool>(info[0]).FromJust();
   bool bSuccess = obj->self_->SetDisplayVisibility(bIsVisibleOnDesktop);
   info.GetReturnValue().Set(Nan::New<Boolean>(bSuccess));
 }
@@ -464,7 +464,7 @@ NAN_METHOD(IVRSystem::GetDeviceToAbsoluteTrackingPose)
     return;
   }
 
-  uint32_t nOrigin = info[0]->Uint32Value();
+  uint32_t nOrigin = info[0]->Uint32Value(Nan::GetCurrentContext()).FromJust();
   if (nOrigin >= 3)
   {
     Nan::ThrowTypeError("Argument[0] was out of enum range (ETrackingUniverseOrigin).");
@@ -495,9 +495,9 @@ NAN_METHOD(IVRSystem::GetDeviceToAbsoluteTrackingPose)
   Local<Float32Array> hmdFloat32Array = Local<Float32Array>::Cast(info[1]);
   Local<Float32Array> leftControllerFloat32Array = Local<Float32Array>::Cast(info[2]);
   Local<Float32Array> rightControllerFloat32Array = Local<Float32Array>::Cast(info[3]);
-  hmdFloat32Array->Set(0, Number::New(Isolate::GetCurrent(), std::numeric_limits<float>::quiet_NaN()));
-  leftControllerFloat32Array->Set(0, Number::New(Isolate::GetCurrent(), std::numeric_limits<float>::quiet_NaN()));
-  rightControllerFloat32Array->Set(0, Number::New(Isolate::GetCurrent(), std::numeric_limits<float>::quiet_NaN()));
+  hmdFloat32Array->Set(Nan::GetCurrentContext(), 0, Number::New(Isolate::GetCurrent(), std::numeric_limits<float>::quiet_NaN()));
+  leftControllerFloat32Array->Set(Nan::GetCurrentContext(), 0, Number::New(Isolate::GetCurrent(), std::numeric_limits<float>::quiet_NaN()));
+  rightControllerFloat32Array->Set(Nan::GetCurrentContext(), 0, Number::New(Isolate::GetCurrent(), std::numeric_limits<float>::quiet_NaN()));
 
   for (unsigned int i = 0; i < trackedDevicePoseArray.size(); i++) {
     const vr::TrackedDevicePose_t &trackedDevicePose = trackedDevicePoseArray[i];
@@ -508,13 +508,13 @@ NAN_METHOD(IVRSystem::GetDeviceToAbsoluteTrackingPose)
 
         for (unsigned int v = 0; v < 4; v++) {
           for (unsigned int u = 0; u < 3; u++) {
-            hmdFloat32Array->Set(v * 4 + u, Number::New(Isolate::GetCurrent(), matrix.m[u][v]));
+            hmdFloat32Array->Set(Nan::GetCurrentContext(), v * 4 + u, Number::New(Isolate::GetCurrent(), matrix.m[u][v]));
           }
         }
-        hmdFloat32Array->Set(0 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
-        hmdFloat32Array->Set(1 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
-        hmdFloat32Array->Set(2 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
-        hmdFloat32Array->Set(3 * 4 + 3, Number::New(Isolate::GetCurrent(), 1));
+        hmdFloat32Array->Set(Nan::GetCurrentContext(), 0 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
+        hmdFloat32Array->Set(Nan::GetCurrentContext(), 1 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
+        hmdFloat32Array->Set(Nan::GetCurrentContext(), 2 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
+        hmdFloat32Array->Set(Nan::GetCurrentContext(), 3 * 4 + 3, Number::New(Isolate::GetCurrent(), 1));
       } else if (deviceClass == vr::TrackedDeviceClass_Controller) {
         const vr::ETrackedControllerRole controllerRole = obj->self_->GetControllerRoleForTrackedDeviceIndex(i);
         if (controllerRole == vr::TrackedControllerRole_LeftHand) {
@@ -522,25 +522,25 @@ NAN_METHOD(IVRSystem::GetDeviceToAbsoluteTrackingPose)
 
           for (unsigned int v = 0; v < 4; v++) {
             for (unsigned int u = 0; u < 3; u++) {
-              leftControllerFloat32Array->Set(v * 4 + u, Number::New(Isolate::GetCurrent(), matrix.m[u][v]));
+              leftControllerFloat32Array->Set(Nan::GetCurrentContext(), v * 4 + u, Number::New(Isolate::GetCurrent(), matrix.m[u][v]));
             }
           }
-          leftControllerFloat32Array->Set(0 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
-          leftControllerFloat32Array->Set(1 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
-          leftControllerFloat32Array->Set(2 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
-          leftControllerFloat32Array->Set(3 * 4 + 3, Number::New(Isolate::GetCurrent(), 1));
+          leftControllerFloat32Array->Set(Nan::GetCurrentContext(), 0 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
+          leftControllerFloat32Array->Set(Nan::GetCurrentContext(), 1 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
+          leftControllerFloat32Array->Set(Nan::GetCurrentContext(), 2 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
+          leftControllerFloat32Array->Set(Nan::GetCurrentContext(), 3 * 4 + 3, Number::New(Isolate::GetCurrent(), 1));
         } else if (controllerRole == vr::TrackedControllerRole_LeftHand) {
           const vr::HmdMatrix34_t &matrix = trackedDevicePose.mDeviceToAbsoluteTracking;
 
           for (unsigned int v = 0; v < 4; v++) {
             for (unsigned int u = 0; u < 3; u++) {
-              rightControllerFloat32Array->Set(v * 4 + u, Number::New(Isolate::GetCurrent(), matrix.m[u][v]));
+              rightControllerFloat32Array->Set(Nan::GetCurrentContext(), v * 4 + u, Number::New(Isolate::GetCurrent(), matrix.m[u][v]));
             }
           }
-          rightControllerFloat32Array->Set(0 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
-          rightControllerFloat32Array->Set(1 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
-          rightControllerFloat32Array->Set(2 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
-          rightControllerFloat32Array->Set(3 * 4 + 3, Number::New(Isolate::GetCurrent(), 1));
+          rightControllerFloat32Array->Set(Nan::GetCurrentContext(), 0 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
+          rightControllerFloat32Array->Set(Nan::GetCurrentContext(), 1 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
+          rightControllerFloat32Array->Set(Nan::GetCurrentContext(), 2 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
+          rightControllerFloat32Array->Set(Nan::GetCurrentContext(), 3 * 4 + 3, Number::New(Isolate::GetCurrent(), 1));
         }
       }
     }
@@ -584,13 +584,13 @@ NAN_METHOD(IVRSystem::GetSeatedZeroPoseToStandingAbsoluteTrackingPose)
   Local<Float32Array> float32Array = Local<Float32Array>::Cast(info[0]);
   for (unsigned int v = 0; v < 4; v++) {
     for (unsigned int u = 0; u < 3; u++) {
-      float32Array->Set(v * 4 + u, Number::New(Isolate::GetCurrent(), matrix.m[u][v]));
+      float32Array->Set(Nan::GetCurrentContext(), v * 4 + u, Number::New(Isolate::GetCurrent(), matrix.m[u][v]));
     }
   }
-  float32Array->Set(0 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
-  float32Array->Set(1 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
-  float32Array->Set(2 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
-  float32Array->Set(3 * 4 + 3, Number::New(Isolate::GetCurrent(), 1));
+  float32Array->Set(Nan::GetCurrentContext(), 0 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
+  float32Array->Set(Nan::GetCurrentContext(), 1 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
+  float32Array->Set(Nan::GetCurrentContext(), 2 * 4 + 3, Number::New(Isolate::GetCurrent(), 0));
+  float32Array->Set(Nan::GetCurrentContext(), 3 * 4 + 3, Number::New(Isolate::GetCurrent(), 1));
 }
 
 //=============================================================================
@@ -627,7 +627,7 @@ NAN_METHOD(IVRSystem::GetSortedTrackedDeviceIndicesOfClass)
     return;
   }
 
-  uint32_t nTrackedDeviceClass = info[0]->Uint32Value();
+  uint32_t nTrackedDeviceClass = info[0]->Uint32Value(Nan::GetCurrentContext()).FromJust();
   if (nTrackedDeviceClass >= 6)
   {
     Nan::ThrowTypeError("Argument[0] was out of enum range (ETrackedDeviceClass).");
@@ -644,7 +644,7 @@ NAN_METHOD(IVRSystem::GetSortedTrackedDeviceIndicesOfClass)
     }
     else
     {
-      unRelativeToTrackedDeviceIndex = info[1]->Uint32Value();
+      unRelativeToTrackedDeviceIndex = info[1]->Uint32Value(Nan::GetCurrentContext()).FromJust();
     }
   }
 
@@ -678,7 +678,7 @@ NAN_METHOD(IVRSystem::GetTrackedDeviceActivityLevel)
     return;
   }
 
-  uint32_t unDeviceId = info[0]->Uint32Value();
+  uint32_t unDeviceId = info[0]->Uint32Value(Nan::GetCurrentContext()).FromJust();
   vr::EDeviceActivityLevel deviceActivityLevel =
     obj->self_->GetTrackedDeviceActivityLevel(unDeviceId);
   info.GetReturnValue().Set(Nan::New<Number>(
@@ -734,7 +734,7 @@ NAN_METHOD(IVRSystem::GetTrackedDeviceClass)
     return;
   }
 
-  uint32_t unDeviceIndex = info[0]->Uint32Value();
+  uint32_t unDeviceIndex = info[0]->Uint32Value(Nan::GetCurrentContext()).FromJust();
   vr::ETrackedDeviceClass trackedDeviceClass =
     obj->self_->GetTrackedDeviceClass(unDeviceIndex);
   info.GetReturnValue().Set(Nan::New<Number>(
@@ -764,9 +764,9 @@ NAN_METHOD(IVRSystem::GetControllerState)
   }
 
   Local<Float32Array> buttons = Local<Float32Array>::Cast(info[1]);
-  buttons->Set(0, Number::New(Isolate::GetCurrent(), std::numeric_limits<float>::quiet_NaN()));
+  buttons->Set(Nan::GetCurrentContext(), 0, Number::New(Isolate::GetCurrent(), std::numeric_limits<float>::quiet_NaN()));
 
-  uint32_t side = info[0]->Uint32Value();
+  uint32_t side = info[0]->Uint32Value(Nan::GetCurrentContext()).FromJust();
   for (unsigned int i = 0; i < vr::k_unMaxTrackedDeviceCount; i++) {
     vr::ETrackedDeviceClass deviceClass = obj->self_->GetTrackedDeviceClass(i);
     if (deviceClass == vr::TrackedDeviceClass_Controller) {
@@ -774,22 +774,22 @@ NAN_METHOD(IVRSystem::GetControllerState)
       if ((side == 0 && controllerRole == vr::TrackedControllerRole_LeftHand) || (side == 1 && controllerRole == vr::TrackedControllerRole_RightHand)) {
         vr::VRControllerState_t controllerState;
         if (obj->self_->GetControllerState(i, &controllerState, sizeof(controllerState))) {
-          buttons->Set(0, Number::New(Isolate::GetCurrent(), 1));
+          buttons->Set(Nan::GetCurrentContext(), 0, Number::New(Isolate::GetCurrent(), 1));
 
-          buttons->Set(1, Number::New(Isolate::GetCurrent(), (controllerState.ulButtonPressed & vr::ButtonMaskFromId(vr::k_EButton_System)) ? 1 : 0));
-          buttons->Set(2, Number::New(Isolate::GetCurrent(), (controllerState.ulButtonPressed & vr::ButtonMaskFromId(vr::k_EButton_ApplicationMenu)) ? 1 : 0));
-          buttons->Set(3, Number::New(Isolate::GetCurrent(), (controllerState.ulButtonPressed & vr::ButtonMaskFromId(vr::k_EButton_Grip)) ? 1 : 0));
-          buttons->Set(4, Number::New(Isolate::GetCurrent(), (controllerState.ulButtonPressed & vr::ButtonMaskFromId(vr::k_EButton_SteamVR_Touchpad)) ? 1 : 0));
-          buttons->Set(5, Number::New(Isolate::GetCurrent(), (controllerState.ulButtonPressed & vr::ButtonMaskFromId(vr::k_EButton_SteamVR_Trigger)) ? 1 : 0));
+          buttons->Set(Nan::GetCurrentContext(), 1, Number::New(Isolate::GetCurrent(), (controllerState.ulButtonPressed & vr::ButtonMaskFromId(vr::k_EButton_System)) ? 1 : 0));
+          buttons->Set(Nan::GetCurrentContext(), 2, Number::New(Isolate::GetCurrent(), (controllerState.ulButtonPressed & vr::ButtonMaskFromId(vr::k_EButton_ApplicationMenu)) ? 1 : 0));
+          buttons->Set(Nan::GetCurrentContext(), 3, Number::New(Isolate::GetCurrent(), (controllerState.ulButtonPressed & vr::ButtonMaskFromId(vr::k_EButton_Grip)) ? 1 : 0));
+          buttons->Set(Nan::GetCurrentContext(), 4, Number::New(Isolate::GetCurrent(), (controllerState.ulButtonPressed & vr::ButtonMaskFromId(vr::k_EButton_SteamVR_Touchpad)) ? 1 : 0));
+          buttons->Set(Nan::GetCurrentContext(), 5, Number::New(Isolate::GetCurrent(), (controllerState.ulButtonPressed & vr::ButtonMaskFromId(vr::k_EButton_SteamVR_Trigger)) ? 1 : 0));
 
-          buttons->Set(6, Number::New(Isolate::GetCurrent(), (controllerState.ulButtonTouched & vr::ButtonMaskFromId(vr::k_EButton_System)) ? 1 : 0));
-          buttons->Set(7, Number::New(Isolate::GetCurrent(), (controllerState.ulButtonTouched & vr::ButtonMaskFromId(vr::k_EButton_ApplicationMenu)) ? 1 : 0));
-          buttons->Set(8, Number::New(Isolate::GetCurrent(), (controllerState.ulButtonTouched & vr::ButtonMaskFromId(vr::k_EButton_Grip)) ? 1 : 0));
-          buttons->Set(9, Number::New(Isolate::GetCurrent(), (controllerState.ulButtonTouched & vr::ButtonMaskFromId(vr::k_EButton_SteamVR_Touchpad)) ? 1 : 0));
-          buttons->Set(10, Number::New(Isolate::GetCurrent(), (controllerState.ulButtonTouched & vr::ButtonMaskFromId(vr::k_EButton_SteamVR_Trigger)) ? 1 : 0));
+          buttons->Set(Nan::GetCurrentContext(), 6, Number::New(Isolate::GetCurrent(), (controllerState.ulButtonTouched & vr::ButtonMaskFromId(vr::k_EButton_System)) ? 1 : 0));
+          buttons->Set(Nan::GetCurrentContext(), 7, Number::New(Isolate::GetCurrent(), (controllerState.ulButtonTouched & vr::ButtonMaskFromId(vr::k_EButton_ApplicationMenu)) ? 1 : 0));
+          buttons->Set(Nan::GetCurrentContext(), 8, Number::New(Isolate::GetCurrent(), (controllerState.ulButtonTouched & vr::ButtonMaskFromId(vr::k_EButton_Grip)) ? 1 : 0));
+          buttons->Set(Nan::GetCurrentContext(), 9, Number::New(Isolate::GetCurrent(), (controllerState.ulButtonTouched & vr::ButtonMaskFromId(vr::k_EButton_SteamVR_Touchpad)) ? 1 : 0));
+          buttons->Set(Nan::GetCurrentContext(), 10, Number::New(Isolate::GetCurrent(), (controllerState.ulButtonTouched & vr::ButtonMaskFromId(vr::k_EButton_SteamVR_Trigger)) ? 1 : 0));
 
-          buttons->Set(11, Number::New(Isolate::GetCurrent(), controllerState.rAxis[0].x));
-          buttons->Set(12, Number::New(Isolate::GetCurrent(), controllerState.rAxis[0].y));
+          buttons->Set(Nan::GetCurrentContext(), 11, Number::New(Isolate::GetCurrent(), controllerState.rAxis[0].x));
+          buttons->Set(Nan::GetCurrentContext(), 12, Number::New(Isolate::GetCurrent(), controllerState.rAxis[0].y));
 
           break;
         }
@@ -899,8 +899,8 @@ NAN_METHOD(IVRSystem::GetStringTrackedDeviceProperty) {
 	vr::TrackedPropertyError err;
 
 	obj->self_->GetStringTrackedDeviceProperty(
-     (vr::TrackedDeviceIndex_t)info[0]->Uint32Value(), 
-     (vr::ETrackedDeviceProperty)info[1]->Uint32Value(),
+     (vr::TrackedDeviceIndex_t)info[0]->Uint32Value(Nan::GetCurrentContext()).FromJust(), 
+     (vr::ETrackedDeviceProperty)info[1]->Uint32Value(Nan::GetCurrentContext()).FromJust(),
      buf, 
      sizeof(buf), 
      &err

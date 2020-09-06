@@ -61,15 +61,15 @@ template<>
 vr::HmdMatrix34_t decode(const v8::Local<v8::Value> value)
 {
   vr::HmdMatrix34_t result;
-  const auto matrix = value->ToObject();
+  const auto matrix = value->ToObject(Nan::GetCurrentContext()).ToLocalChecked();
 
   for (uint32_t rowIdx = 0; rowIdx < 3; ++rowIdx)
   {
-    const auto row = Nan::Get(matrix, rowIdx).ToLocalChecked()->ToObject();
+    const auto row = Nan::Get(matrix, rowIdx).ToLocalChecked()->ToObject(Nan::GetCurrentContext()).ToLocalChecked();
     for (uint32_t colIdx = 0; colIdx < 4; ++colIdx)
     {
       const auto cell = Nan::Get(row, colIdx).ToLocalChecked();
-      result.m[rowIdx][colIdx] = static_cast<float>(cell->NumberValue());
+      result.m[rowIdx][colIdx] = static_cast<float>(cell->NumberValue(Nan::GetCurrentContext()).FromJust());
     }
   }
 
@@ -96,12 +96,12 @@ template<>
 vr::HmdVector3_t decode(const v8::Local<v8::Value> value)
 {
   vr::HmdVector3_t result;
-  const auto array = value->ToObject();
+  const auto array = value->ToObject(Nan::GetCurrentContext()).ToLocalChecked();
 
   for (uint32_t idx = 0; idx < 3; ++idx)
   {
     const auto cell = Nan::Get(array, idx).ToLocalChecked();
-    result.v[idx] = static_cast<float>(cell->NumberValue());
+    result.v[idx] = static_cast<float>(cell->NumberValue(Nan::GetCurrentContext()).FromJust());
   }
 
   return result;
@@ -198,7 +198,7 @@ template<>
 vr::TrackedDevicePose_t decode(const v8::Local<v8::Value> value)
 {
   vr::TrackedDevicePose_t result;
-  const auto object = value->ToObject();
+  const auto object = value->ToObject(Nan::GetCurrentContext()).ToLocalChecked();
 
   auto deviceToAbsoluteTracking_prop =
     Nan::New<v8::String>("deviceToAbsoluteTracking").ToLocalChecked();
@@ -221,17 +221,15 @@ vr::TrackedDevicePose_t decode(const v8::Local<v8::Value> value)
     Nan::New<v8::String>("trackingResult").ToLocalChecked();
   result.eTrackingResult =
     static_cast<vr::ETrackingResult>(
-      Nan::Get(object, trackingResult_prop).ToLocalChecked()->Uint32Value());
+      Nan::Get(object, trackingResult_prop).ToLocalChecked()->Uint32Value(Nan::GetCurrentContext()).FromJust());
 
   auto poseIsValid_prop =
     Nan::New<v8::String>("poseIsValid").ToLocalChecked();
-  result.bPoseIsValid =
-    Nan::Get(object, poseIsValid_prop).ToLocalChecked()->BooleanValue();
+  result.bPoseIsValid = Nan::To<bool>(Nan::Get(object, poseIsValid_prop).ToLocalChecked()).FromJust();
 
   auto deviceIsConnected_prop =
     Nan::New<v8::String>("deviceIsConnected").ToLocalChecked();
-  result.bDeviceIsConnected =
-    Nan::Get(object, deviceIsConnected_prop).ToLocalChecked()->BooleanValue();
+  result.bDeviceIsConnected = Nan::To<bool>(Nan::Get(object, deviceIsConnected_prop).ToLocalChecked()).FromJust();
 
   return result;
 }

@@ -8,7 +8,7 @@
 using namespace v8;
 
 #define CHECK_ERROR(err) { if (err != vr::VROverlayError_None) { Nan::ThrowError(vr::VROverlay()->GetOverlayErrorNameFromEnum(err)); return; } }
-#define HND_OVERLAY(prop) overlayHandleMap[prop->Uint32Value()]
+#define HND_OVERLAY(prop) overlayHandleMap[prop->Uint32Value(Nan::GetCurrentContext()).FromJust()]
 
 bool IVROverlay::checkError(vr::VROverlayError err, const char *msg) {
     if (err != vr::VROverlayError_None) {
@@ -213,8 +213,8 @@ NAN_METHOD(IVROverlay::SetOverlayTextureFromBuffer) {
 
     Local<ArrayBufferView> input = info[1].As<ArrayBufferView>();
 
-    uint32_t width = info[2]->Uint32Value();
-    uint32_t height = info[3]->Uint32Value();
+    uint32_t width = info[2]->Uint32Value(Nan::GetCurrentContext()).FromJust();
+    uint32_t height = info[3]->Uint32Value(Nan::GetCurrentContext()).FromJust();
 
     Nan::TypedArrayContents<uint8_t> buf(input);
 
@@ -226,7 +226,7 @@ NAN_METHOD(IVROverlay::SetOverlayTextureFromBuffer) {
 }
 
 NAN_METHOD(IVROverlay::SetOverlayTransformTrackedDeviceRelative) {
-    vr::TrackedDeviceIndex_t trackedDevice = info[1]->Uint32Value();
+    vr::TrackedDeviceIndex_t trackedDevice = info[1]->Uint32Value(Nan::GetCurrentContext()).FromJust();
     vr::HmdMatrix34_t transform = decodeVec3x4(info[2]);
 
     vr::VROverlayError err;
@@ -240,7 +240,7 @@ NAN_METHOD(IVROverlay::SetOverlayWidthInMeters) {
         return;
     }
 
-    uint32_t width = info[1]->Uint32Value();
+    uint32_t width = info[1]->Uint32Value(Nan::GetCurrentContext()).FromJust();
 
     vr::VROverlayError err;
     err = vr::VROverlay()->SetOverlayWidthInMeters(HND_OVERLAY(info[0]), width);
@@ -255,8 +255,8 @@ NAN_METHOD(IVROverlay::SetOverlayMouseScale) {
 
     vr::HmdVector2_t vecWindowSize =
     {
-        info[1]->Uint32Value(),
-        info[2]->Uint32Value()
+        info[1]->Uint32Value(Nan::GetCurrentContext()).FromJust(),
+        info[2]->Uint32Value(Nan::GetCurrentContext()).FromJust()
     };
     vr::VROverlayError err;
     err = vr::VROverlay()->SetOverlayMouseScale(HND_OVERLAY(info[0]), &vecWindowSize);
